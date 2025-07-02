@@ -6,7 +6,9 @@ This project is a proof of concept for a modular Retrieval-Augmented Generation 
 
 ```
 compliance_rag/
-├── main.py                # local running pipeline, except the loading documents, embedding and indexing
+├── api.py                 # FastAPI service exposing /qa endpoint
+├── backend.py             # Q&A logic using retriever + LLM
+├── main.py                # Local CLI pipeline runner
 ├── gradio_app.py          # Web interface (optional) - Next version
 ├── requirements.txt       # Python dependencies
 ├── data/
@@ -17,14 +19,12 @@ compliance_rag/
 ├── src/
 │   ├── parser.py          # Parses and cleans documents
 │   ├── embedder.py        # Embedding and indexing in FAISS
-│   ├── build_index.py     # Full indexing pipeline
-|── backend.py             # Q&A logic using retriever + LLM
-├── AI_Compliance_Copilot.ipynb  # notebook with full explanation 
-├── compliance_suggestion_questions.md            # questions suggested for test
-
+│   └── build_index.py     # Full indexing pipeline
+├── AI_Compliance_Copilot.ipynb  # Notebook with explanation & demo
+└── compliance_suggestion_questions.md  # Test question set
 ```
 
-> In a production scenario, documents would come directly from Dow Jones internal systems or cloud buckets, not scraped from the internet. This download simulation is used here purely for prototyping.
+> In a production scenario, documents would come directly from internal systems or cloud storage, not scraped from public sites. This download simulation is used purely for prototyping.
 
 ## Initial Challenges
 
@@ -32,35 +32,30 @@ Several architectures were tested:
 
 ### Hugging Face LLMs (e.g. `flan-t5-base`)
 - Required API tokens
-- Produced 401 Unauthorized errors, even with valid tokens
+- Produced 401 Unauthorized errors
 - Some models not deployable via Inference Endpoints without paid plans
 
 ### Ollama for embeddings (`nomic-embed-text`)
-- Too slow and heavy for local usage
-- Often failed due to large download size or resource limits
+- Too slow and heavy locally
+- Resource limits caused frequent failures
 
 ## Final Working Setup
 
-The solution that worked best was:
-
 ### Embeddings
 - Model: `sentence-transformers/paraphrase-albert-small-v2`
-- Source: Hugging Face (via `langchain_community.embeddings.HuggingFaceEmbeddings`)
-- Why it worked:
-  - Runs locally
-  - Does not require API token
+- Source: Hugging Face (`langchain_community.embeddings.HuggingFaceEmbeddings`)
+- Characteristics:
+  - Runs locally without tokens
   - Fast and lightweight
 
 ### LLM
 - Model: `tinyllama`
-- Source: Ollama (runs locally)
-- Why it worked:
-  - Offline
-  - Lightweight
-  - No rate limits or quotas
-  - Solved issues with Hugging Face's hosted inference
+- Source: Ollama
+- Characteristics:
+  - Offline, no rate limits
+  - Lightweight for prototyping
 
-> Note: TinyLLaMA is very limited compared to GPT-4, but sufficient for basic prototyping.
+> **Note:** TinyLLaMA is limited compared to GPT-4 but sufficient for POC.
 
 ## Installation & Setup
 
@@ -68,9 +63,9 @@ The solution that worked best was:
 
 ```bash
 python -m venv venv
-# On Unix/macOS:
+# macOS/Linux:
 source venv/bin/activate
-# On Windows:
+# Windows:
 venv\Scripts\activate
 ```
 
@@ -78,83 +73,121 @@ venv\Scripts\activate
 
 ```bash
 pip install -r requirements.txt
-```
+``` 
 
 ### 3. Install Ollama and pull the model
 
 ```bash
-# Install from https://ollama.com
+# https://ollama.com
 ollama run tinyllama
 ```
 
-## Step 1: Populate Your Document Base
+## Step 1: Prepare and Index Documents
 
-### Download compliance-related documents
+### Download sample documents
 
 ```bash
 python docs/fetch_data.py
 ```
 
-Some downloads may fail due to external site restrictions (403, 404, or connection errors). In such cases, files were added manually. In a production scenario, these files would reside in authenticated internal storage, not scraped from the public web.
+### Build the FAISS index
 
-### Build the semantic index
-
+**Preferred (with cleaning):**
 ```bash
-python src/build_index.py
+python - <<EOF
+from src.parser import load_documents, clean_and_parse
+from src.embedder import embed_and_store
+raw = load_documents("data/raw")
+cleaned = clean_and_parse(raw)
+embed_and_store(cleaned, "data/index")
+EOF
 ```
 
-This loads all documents from `data/raw/`, splits them, creates embeddings, and stores them in `data/index/`.
+**POC Shortcut (no cleaning):**
+```bash
+python - <<EOF
+from src.parser import load_documents
+from src.embedder import embed_and_store
+raw = load_documents("data/raw")
+embed_and_store(raw, "data/index")
+EOF
+```
 
-### Inspect the current FAISS index
-
-You can quickly inspect what content was embedded using the utility below:
+### Inspect the index
 
 ```bash
 python inspect_index.py
 ```
 
-This will list the text content (first 300 chars) of each embedded document currently present in the vector store.
+## Step 2: Run Locally via CLI or Notebook
 
-## Step 2: Ask Questions via CLI
+### CLI Mode
 
 ```bash
 python main.py
 ```
 
-Example questions:
+### Notebook Demo
+Open `AI_Compliance_Copilot.ipynb` to run step-by-step in Jupyter, including example questions and source-cited answers.
 
-- “What is the most recent FATF recommendation?”
-- “Was Tesla mentioned in any OFAC sanctions?”
-- “What companies were involved in FinCEN advisories?”
+## Step 3: API Usage
 
-In a real deployment, questions could be tailored to each client's business data—assuming the proper documents were ingested.
+This section describes how to launch and interact with the FastAPI service.
 
-## Optional: Web Interface (Gradio)
+### 1. Install FastAPI & Uvicorn
 
 ```bash
-python gradio_app.py
+pip install fastapi uvicorn[standard]
 ```
 
-Opens a browser-based chat UI for the same question-answering system.
+### 2. Start the API server
 
-## Current Models Used
+```bash
+uvicorn api:app --reload --host 0.0.0.0 --port 8000
+```
 
-| Component     | Model                                            | Source        | Token Required |
-|---------------|--------------------------------------------------|---------------|----------------|
-| Embeddings    | sentence-transformers/paraphrase-albert-small-v2 | Hugging Face  | No             |
-| LLM           | tinyllama                                        | Ollama        | No             |
+### 3. Health Check (optional)
+Visit or `curl`:
+```
+GET http://localhost:8000/health
+```
+Should return:
+```json
+{"status": "ok", "message": "Dow Jones AI Compliance Copilot API is running."}
+```
 
-These can be swapped in `app.py` and `embedder.py` for more powerful models like GPT-4 (via OpenAI API).
+### 4. Query the `/qa` Endpoint
+Use **POST** with JSON body:
+
+```bash
+curl -X POST http://localhost:8000/qa \
+  -H "Content-Type: application/json" \
+  -d '{ "question": "How are cryptocurrency mixers used in ransomware schemes?" }'
+```
+
+Expected response:
+```json
+{ "answer": "<source-cited answer>" }
+```
+
+Or in **Postman**:
+- Method: POST  
+- URL: `http://localhost:8000/qa`  
+- Body → Raw → JSON:
+  ```json
+  { "question": "What are the risks associated with cryptocurrency mixers?" }
+  ```
 
 ## Design Principles
 
-- **LLM-Agnostic**: Switch between Ollama, Hugging Face, or OpenAI easily
-- **Separation of concerns**: Fetching, parsing, indexing, and querying in clean modules
-- **Scalable**: Just drop more files in `data/raw/` and rebuild the index
-- **Prototyping-friendly**: Uses public data and minimal infra requirements
+- **LLM-agnostic**: Swap between Ollama, Hugging Face, OpenAI
+- **Modular**: Fetching, parsing, indexing, querying separated
+- **Scalable**: Add more docs to `data/raw`, re-index, or in production use data from cloud storage and with differents types
 
 ## License
 
-This proof of concept uses only public, freely accessible documents and is intended solely for demonstration purposes.
+Publicly accessible documents only; intended for demonstration. Images and scanned tables are not indexed.
 
-Only the textual content of documents is embedded. Images, scanned tables, or OCR content are not indexed.
+---
+
+*Now you have everything needed—from local CLI and notebook demos to a live API—for exploring the Dow Jones AI Compliance Copilot POC.*

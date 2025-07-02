@@ -8,4 +8,7 @@ tqdm
 transformers
 sentence-transformers
 python-dotenv
-gradio
+fastapi
+uvicorn[standard]
+pydantic
+langchain_community
