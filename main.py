@@ -1,5 +1,4 @@
 from pathlib import Path
-#from src.build_index import build_vector_store
 from backend import run_qa_app
 from dotenv import load_dotenv
 load_dotenv()
