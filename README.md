@@ -6,8 +6,8 @@ This project is a proof of concept for a modular Retrieval-Augmented Generation 
 
 ```
 compliance_rag/
-├── main.py                # CLI interface to ask questions
-├── gradio_app.py          # Web interface (optional)
+├── main.py                # local running pipeline, except the loading documents, embedding and indexing
+├── gradio_app.py          # Web interface (optional) - Next version
 ├── requirements.txt       # Python dependencies
 ├── data/
 │   ├── raw/               # Compliance documents (PDF, HTML, CSV)
@@ -16,11 +16,12 @@ compliance_rag/
 │   └── fetch_data.py      # Public document downloader
 ├── src/
 │   ├── parser.py          # Parses and cleans documents
-│   ├── embedder.py        # Embeds documents and stores FAISS
+│   ├── embedder.py        # Embedding and indexing in FAISS
 │   ├── build_index.py     # Full indexing pipeline
-│   └── qa.py              # Q&A logic using retriever + LLM
-├── notebooks/
-│   └── final_walkthrough.ipynb  # Optional notebook with full explanation
+|── backend.py             # Q&A logic using retriever + LLM
+├── AI_Compliance_Copilot.ipynb  # notebook with full explanation 
+├── compliance_suggestion_questions.md            # questions suggested for test
+
 ```
 
 > In a production scenario, documents would come directly from Dow Jones internal systems or cloud buckets, not scraped from the internet. This download simulation is used here purely for prototyping.
@@ -138,10 +139,10 @@ Opens a browser-based chat UI for the same question-answering system.
 
 ## Current Models Used
 
-| Component     | Model                                           | Source        | Token Required |
+| Component     | Model                                            | Source        | Token Required |
 |---------------|--------------------------------------------------|---------------|----------------|
 | Embeddings    | sentence-transformers/paraphrase-albert-small-v2 | Hugging Face  | No             |
-| LLM           | tinyllama                                       | Ollama        | No             |
+| LLM           | tinyllama                                        | Ollama        | No             |
 
 These can be swapped in `app.py` and `embedder.py` for more powerful models like GPT-4 (via OpenAI API).
 

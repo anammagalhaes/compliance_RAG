@@ -1,3 +1,35 @@
+
+# Example Compliance Questions from Indexed Documents
+
+## Elder Financial Exploitation (EFE) – SAR Filing Questions
+
+1. **What should financial institutions include in the SAR narrative when reporting Elder Financial Exploitation?**
+2. **How should institutions mark the SAR to indicate it involves elder financial abuse?**
+3. **What best practices does FinCEN recommend for documenting EFE in SAR reports?**
+4. **Which SAR fields should be checked when filing a report related to elder exploitation?**
+5. **How can institutions support law enforcement investigations when reporting suspected EFE?**
+6. **Is it necessary to include victim details such as age and location when filing an EFE SAR?**
+7. **How are law enforcement agencies expected to use information from EFE-related SARs?**
+8. **What should be done if the elder victim is still at risk after the SAR is filed?**
+9. **Should financial institutions file a SAR jointly with other institutions in EFE cases?**
+
+## Ransomware and Cybercrime Reporting – SAR and BSA Questions
+
+1. **What are the SAR reporting obligations for ransomware-related incidents?**
+2. **What indicators should financial institutions look for when detecting ransomware payments?**
+3. **How are cryptocurrency mixers used in ransomware schemes?**
+4. **Which SAR fields should be completed for cyber-related incidents, according to FinCEN?**
+5. **What is the role of Digital Forensics and Incident Response (DFIR) companies in ransomware payments?**
+6. **How can financial institutions help recover funds lost to ransomware attacks?**
+7. **What red flags are associated with ransomware payments made via virtual currency?**
+8. **How does FinCEN suggest referencing ransomware advisories in SAR filings?**
+9. **What are the risks of facilitating ransomware payments without proper AML controls?**
+
+
+
+======== ======= ======= ======== ======= =========
+## Documents links
+
 apple_10k_2022.txt
 URL: https://www.sec.gov/Archives/edgar/data/0000320193/000032019322000108/aapl-20220924.htm
 Description: Apple Inc. 10-K annual report for fiscal year 2022 (SEC filing)
@@ -45,8 +77,6 @@ Description: FATF procedures for mutual evaluations and follow-up (2022)
 fatf_universal_procedures.pdf
 URL: https://www.fatf-gafi.org/content/dam/fatf-gafi/publications/FATF-Universal-Procedures.pdf.coredownload.inline.pdf
 Description: FATF Universal Procedures for country assessments
-
-
 
 
 Note: Some documents were downloaded manually due to server-side restrictions that blocked automated requests (e.g., incomplete downloads or 403 errors).

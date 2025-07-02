@@ -62,3 +62,12 @@ def run_qa_app(index_path: str):
 
         response = qa_chain.invoke({"query": question})
         print(f"\n=== Answer:\n{response['result']}\n")
+
+
+
+
+# New function for notebook-based Q&A!!!! PROBLEEEEMMM
+def ask_question(question, index_path="data/index"):
+    qa_chain = build_qa_chain(index_path)
+    response = qa_chain.invoke({"query": question})
+    return response["result"]

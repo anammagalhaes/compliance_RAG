@@ -1,6 +1,11 @@
 langchain
+langchain-community
 faiss-cpu
 ollama
 pypdf
 unstructured
 tqdm
+transformers
+sentence-transformers
+python-dotenv
+gradio
