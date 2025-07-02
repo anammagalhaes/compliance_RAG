@@ -146,16 +146,6 @@ pip install fastapi uvicorn[standard]
 uvicorn api:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### 3. Health Check (optional)
-Visit or `curl`:
-```
-GET http://localhost:8000/health
-```
-Should return:
-```json
-{"status": "ok", "message": "Dow Jones AI Compliance Copilot API is running."}
-```
-
 ### 4. Query the `/qa` Endpoint
 Use **POST** with JSON body:
 
@@ -188,6 +178,4 @@ Or in **Postman**:
 
 Publicly accessible documents only; intended for demonstration. Images and scanned tables are not indexed.
 
----
 
-*Now you have everything needed—from local CLI and notebook demos to a live API—for exploring the Dow Jones AI Compliance Copilot POC.*
