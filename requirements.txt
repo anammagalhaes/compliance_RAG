@@ -1,0 +1,6 @@
+langchain
+faiss-cpu
+ollama
+pypdf
+unstructured
+tqdm
