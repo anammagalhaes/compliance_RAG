@@ -140,19 +140,19 @@ Opens a browser-based chat UI for the same question-answering system.
 
 ## Current Models Used
 
-| Component     | Model                                            | Source        | Token Required |
-|---------------|--------------------------------------------------|---------------|----------------|
-| Embeddings    | sentence-transformers/paraphrase-albert-small-v2 | Hugging Face  | No             |
-| LLM           | tinyllama                                        | Ollama        | No             |
+| Component     | Model                                            | Source        | 
+|---------------|--------------------------------------------------|---------------|
+| Embeddings    | sentence-transformers/paraphrase-albert-small-v2 | Hugging Face  | 
+| LLM           | tinyllama                                        | Ollama        | 
 
 These can be swapped in `app.py` and `embedder.py` for more powerful models like GPT-4 (via OpenAI API).
 
 ## Design Principles
 
-- **LLM-Agnostic**: Switch between Ollama, Hugging Face, or OpenAI easily
+- **LLM-Agnostic**: Switch between Ollama, Hugging Face, or OpenAI easily, as exemple.
 - **Separation of concerns**: Fetching, parsing, indexing, and querying in clean modules
-- **Scalable**: Just drop more files in `data/raw/` and rebuild the index
-- **Prototyping-friendly**: Uses public data and minimal infra requirements
+- **Scalable**: Just drop more files in `data/raw/` and rebuild the index or download from cloud storages.
+- **Prototyping**: Uses public data and minimal infra requirements
 
 ## License
 
