@@ -1,4 +1,4 @@
-# Compliance RAG System – Dow Jones B2B POC
+# Compliance RAG Copilot 
 
 This project is a proof of concept for a modular Retrieval-Augmented Generation (RAG) system designed around compliance-related content. It simulates how Dow Jones could provide intelligent question-answering capabilities to B2B clients, giving natural language access to structured and unstructured regulatory data.
 
